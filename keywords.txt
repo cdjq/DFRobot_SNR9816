@@ -1,0 +1,67 @@
+#######################################
+# Syntax Coloring Map For DFRobot_SNR9816
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DFRobot_SNR9816	KEYWORD1
+DFRobot_SNR9816_I2C	KEYWORD1
+DFRobot_SNR9816_UART	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+getCMDID	KEYWORD2
+playByCMDID	KEYWORD2
+getWakeTime	KEYWORD2
+setWakeTime	KEYWORD2
+getSECID	KEYWORD2
+playBySECID	KEYWORD2
+resetModule	KEYWORD2
+settingCMD	KEYWORD2
+setVolume	KEYWORD2
+getUniqueID	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+SNR9816_UART_MSG_CMD_SET_VOLUME	LITERAL1
+SNR9816_UART_MSG_CMD_SET_ENTERWAKEUP	LITERAL1
+SNR9816_UART_MSG_CMD_SET_MUTE	LITERAL1
+SNR9816_UART_MSG_CMD_SET_WAKE_TIME	LITERAL1
+SoftwareSerial	LITERAL1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
