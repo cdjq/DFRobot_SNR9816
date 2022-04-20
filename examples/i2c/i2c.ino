@@ -27,6 +27,18 @@ void setup()
   Serial.println("Begin ok!");
 
   /**
+   * @brief Set voice volume
+   * @param voc - Volume value(0~20)
+   */
+  SNR9816.setVolume(5);
+
+  /**
+   * @brief 设置静音模式
+   * @param mode - 静音模式; 设置值 1: mute, 0: unmute
+   */
+  SNR9816.setMuteMode(0);
+
+  /**
    * @brief 设置唤醒持续时间
    * @param wakeTime - 唤醒持续时间(0~255)
    */
@@ -45,7 +57,7 @@ void setup()
    * @brief 根据命令词ID播放对应的答复音
    * @param CMDID - 命令词ID
    */
-  SNR9816.playByCMDID(1);   // 唤醒词ID
+  // SNR9816.playByCMDID(1);   // 唤醒指令
   SNR9816.playByCMDID(23);   // 普通词ID
 
 }

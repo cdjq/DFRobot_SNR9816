@@ -18,7 +18,7 @@
  * @param rx - UART 接收数据的引脚
  * @param tx - UART 发送数据的引脚
  */
-#if defined(ARDUINO_AVR_UNO)||defined(ESP8266)   // 使用软串口
+#if (defined(ARDUINO_AVR_UNO) || defined(ESP8266))   // 使用软串口
   SoftwareSerial softSerial(/*rx =*/4, /*tx =*/5);
   DFRobot_SNR9816_UART SNR9816(/*softSerial =*/&softSerial);
 #elif defined(ESP32)   // 使用 可重映射引脚的 硬串口 : Serial1
@@ -53,7 +53,7 @@ void setup()
    * @param setValue - 设置值, 范围参见上述设置类型
    */
   SNR9816.settingCMD(SNR9816_UART_MSG_CMD_SET_MUTE, 0);
-  SNR9816.settingCMD(SNR9816_UART_MSG_CMD_SET_VOLUME, 10);
+  SNR9816.settingCMD(SNR9816_UART_MSG_CMD_SET_VOLUME, 5);
   SNR9816.settingCMD(SNR9816_UART_MSG_CMD_SET_WAKE_TIME, 20);
   SNR9816.settingCMD(SNR9816_UART_MSG_CMD_SET_ENTERWAKEUP, 0);
 

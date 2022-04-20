@@ -33,56 +33,59 @@ bool DFRobot_SNR9816_I2C::begin()
 uint8_t DFRobot_SNR9816_I2C::getCMDID(void)
 {
   uint8_t CMDID = 0;
-  readReg(SNR9816_I2C_REG_CMDID, &CMDID, 1);
+  readReg(SNR9816_I2C_REG_CMDID, &CMDID);
   // DBG(CMDID);
   return CMDID;
 }
 
 void DFRobot_SNR9816_I2C::playByCMDID(uint8_t CMDID)
 {
-  writeReg(SNR9816_I2C_REG_PLAY_CMDID, &CMDID, 1);
+  writeReg(SNR9816_I2C_REG_PLAY_CMDID, &CMDID);
   delay(1000);
 }
 
 uint8_t DFRobot_SNR9816_I2C::getWakeTime(void)
 {
   uint8_t wakeTime = 0;
-  readReg(SNR9816_I2C_REG_WAKE_TIME, &wakeTime, 1);
+  readReg(SNR9816_I2C_REG_WAKE_TIME, &wakeTime);
   return wakeTime;
 }
 
 void DFRobot_SNR9816_I2C::setWakeTime(uint8_t wakeTime)
 {
-  writeReg(SNR9816_I2C_REG_SET_WAKE_TIME, &wakeTime, 1);
+  writeReg(SNR9816_I2C_REG_WAKE_TIME, &wakeTime);
 }
 
-void DFRobot_SNR9816_I2C::writeReg(uint8_t reg, const void* pBuf, size_t size)
+void DFRobot_SNR9816_I2C::setVolume(uint8_t vol)
+{
+  if (vol < 0)
+    vol = 0;
+  else if (vol > 20)
+    vol = 20;
+  writeReg(SNR9816_I2C_REG_SET_VOLUME, &vol);
+}
+
+void DFRobot_SNR9816_I2C::setMuteMode(uint8_t mode)
+{
+  if (0 != mode)
+    mode = 1;
+  writeReg(SNR9816_I2C_REG_SET_MUTE, &mode);
+}
+
+void DFRobot_SNR9816_I2C::writeReg(uint8_t reg, const void* pBuf)
 {
   if(pBuf == NULL) {
     DBG("pBuf ERROR!! : null pointer");
   }
   uint8_t * _pBuf = (uint8_t *)pBuf;
 
-  size_t count = 0;
-  uint8_t data[6] = {0};
-  if(1 == size) {   // 写入id或者唤醒周期
-    count = 3;
-    data[0] = *_pBuf;
-    DBG(data[0], HEX);
-    data[1] = data[0] + reg;
-    DBG(data[1], HEX);
-    data[2] = SNR9816_I2C_MSG_TAIL;
-  }
-
   _pWire->beginTransmission(_deviceAddr);
   _pWire->write(reg);
-  for(size_t i = 0; i < count; i++) {
-    _pWire->write(data[i]);
-  }
+  _pWire->write(*_pBuf);
   _pWire->endTransmission();
 }
 
-size_t DFRobot_SNR9816_I2C::readReg(uint8_t reg, void* pBuf, size_t size)
+size_t DFRobot_SNR9816_I2C::readReg(uint8_t reg, void* pBuf)
 {
   if(NULL == pBuf) {
     DBG("pBuf ERROR!! : null pointer");
@@ -90,27 +93,20 @@ size_t DFRobot_SNR9816_I2C::readReg(uint8_t reg, void* pBuf, size_t size)
   uint8_t * _pBuf = (uint8_t*)pBuf;
 
   size_t count = 0;
-  uint8_t data[6] = {0};
+
   _pWire->beginTransmission(_deviceAddr);
   _pWire->write(reg);
   if(0 != _pWire->endTransmission(false)) {   // Used Wire.endTransmission() to end a slave transmission started by beginTransmission() and arranged by write().
     DBG("endTransmission ERROR!!");
 
   } else {
-    _pWire->requestFrom(_deviceAddr, (uint8_t)3);   // Master device requests size bytes from slave device, which can be accepted by master device with read() or available()
+    _pWire->requestFrom(_deviceAddr, (uint8_t)1);   // Master device requests size bytes from slave device, which can be accepted by master device with read() or available()
 
     while (_pWire->available()) {
-      data[count++] = _pWire->read();   // Use read() to receive and put into buf
-      // DBG(data[count-1], HEX);
+      _pBuf[count++] = _pWire->read();   // Use read() to receive and put into buf
+      // DBG(_pBuf[count-1], HEX);
     }
     // _pWire->endTransmission();
-  }
-
-  if(1 == size) {   // 读取id或者唤醒周期
-    if(((reg + data[0]) == data[1]) && (SNR9816_I2C_MSG_TAIL == data[2])) {   // 验证数据是否无误
-      *_pBuf = data[0];
-      DBG(*_pBuf);
-    }
   }
 
   return count;
@@ -174,20 +170,6 @@ void DFRobot_SNR9816_UART::playByCMDID(uint32_t play_id)
 
     sendPacket(&msg);
     delay(1000);
-}
-
-void DFRobot_SNR9816_UART::getUniqueID(void)
-{
-    sUartMsg_t msg;
-
-    msg.header = SNR9816_UART_MSG_HEAD;
-    msg.dataLength = 1;
-    msg.msgType = SNR9816_UART_MSG_TYPE_CMD_DOWN;
-    msg.msgCmd = SNR9816_UART_MSG_CMD_GET_FLASHUID;
-    msg.msgSeq = sendSequence++;
-    msg.msgData[0] = 0x80;
-
-    sendPacket(&msg);
 }
 
 void DFRobot_SNR9816_UART::resetModule(void)

@@ -37,14 +37,12 @@ SNR9816_I2C_ADDR                  = 0x64
 SNR9816_I2C_REG_CMDID             = 0x02
 ## 用命令词ID播放Audio的寄存器地址
 SNR9816_I2C_REG_PLAY_CMDID        = 0x03
-## 请求得到语义ID的寄存器地址
-SNR9816_I2C_REG_SECID             = 0x04
-## 用语义ID播放Audio的寄存器地址
-SNR9816_I2C_REG_PLAY_SECID        = 0x05
-## 请求得到当前唤醒时间的寄存器地址
+## 设置静音模式的寄存器
+SNR9816_I2C_REG_SET_MUTE          = 0x04
+## 设置音量的寄存器
+SNR9816_I2C_REG_SET_VOLUME        = 0x05
+## 唤醒时间的寄存器地址
 SNR9816_I2C_REG_WAKE_TIME         = 0x06
-## 请求修改当前唤醒时间的寄存器地址
-SNR9816_I2C_REG_SET_WAKE_TIME     = 0x07
 
 # tail
 SNR9816_I2C_MSG_TAIL              = 0x5A
@@ -181,7 +179,27 @@ class DFRobot_SNR9816_I2C(DFRobot_SNR9816):
       @param wakeTime - 唤醒持续时间(0~255)
     '''
     wake_time = wake_time & 0xFF
-    self._write_reg(SNR9816_I2C_REG_SET_WAKE_TIME, wake_time)
+    self._write_reg(SNR9816_I2C_REG_WAKE_TIME, wake_time)
+
+  def set_volume(self, vol):
+    '''!
+      @brief Set voice volume
+      @param vol - Volume value(0~20)
+    '''
+    if (vol < 0):
+      vol = 0
+    elif (vol > 20):
+      vol = 20
+    self._write_reg(SNR9816_I2C_REG_SET_VOLUME, vol)
+
+  def set_mute_mode(self, mode):
+    '''!
+      @brief 设置静音模式
+      @param mode - 静音模式; 设置值 1: mute, 0: unmute
+    '''
+    if (0 != mode):
+      mode = 1
+    self._write_reg(SNR9816_I2C_REG_SET_MUTE, mode)
 
   def _write_reg(self, reg, data):
     '''!

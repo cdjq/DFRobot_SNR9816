@@ -28,12 +28,9 @@
 
 #define SNR9816_I2C_REG_CMDID            uint8_t(0x02)   //!< 请求得到命令词ID的寄存器地址
 #define SNR9816_I2C_REG_PLAY_CMDID       uint8_t(0x03)   //!< 用命令词ID播放Audio的寄存器地址
-#define SNR9816_I2C_REG_SECID            uint8_t(0x04)   //!< 请求得到语义ID的寄存器地址
-#define SNR9816_I2C_REG_PLAY_SECID       uint8_t(0x05)   //!< 用语义ID播放Audio的寄存器地址
-#define SNR9816_I2C_REG_WAKE_TIME        uint8_t(0x06)   //!< 请求得到当前唤醒时间的寄存器地址
-#define SNR9816_I2C_REG_SET_WAKE_TIME    uint8_t(0x07)   //!< 请求修改当前唤醒时间的寄存器地址
-
-#define SNR9816_I2C_MSG_TAIL             uint8_t(0x5A)
+#define SNR9816_I2C_REG_SET_MUTE         uint8_t(0x04)   //!< 设置静音模式的寄存器
+#define SNR9816_I2C_REG_SET_VOLUME       uint8_t(0x05)   //!< 设置音量的寄存器
+#define SNR9816_I2C_REG_WAKE_TIME        uint8_t(0x06)   //!< 唤醒时间的寄存器地址
 
 #define SNR9816_UART_BAUDRATE               long(9600)   //!< UART baud rate
 #define SNR9816_UART_MSG_DATA_MAX_SIZE      uint8_t(8)   //!< 串口数据帧的最大数据长度
@@ -169,41 +166,40 @@ public:
    */
   void setWakeTime(uint8_t wakeTime);
 
+  /**
+   * @fn setVolume
+   * @brief Set voice volume
+   * @param vol - Volume value(0~20)
+   * @return None
+   */
+  void setVolume(uint8_t vol);
+
+  /**
+   * @fn setMuteMode
+   * @brief 设置静音模式
+   * @param mode - 静音模式; 设置值 1: mute, 0: unmute
+   * @return None
+   */
+  void setMuteMode(uint8_t mode);
+
 protected:
-  /**
-   * @fn playBySECID
-   * @brief 获取命令词对应的语义ID
-   * @return None
-   */
-  uint8_t getSECID(void);
-
-  /**
-   * @fn playBySECID
-   * @brief 根据命令词语义ID播放对应的答复音
-   * @param SECID - 命令词语义ID
-   * @return None
-   */
-  void playBySECID(uint8_t SECID);
-
   /**
    * @fn writeReg
    * @brief Write register value through I2C bus
    * @param reg  Register address 8bits
    * @param pBuf Storage and buffer for data to be written
-   * @param size Length of data to be written
    * @return None
    */
-  void writeReg(uint8_t reg, const void* pBuf, size_t size);
+  void writeReg(uint8_t reg, const void* pBuf);
 
   /**
    * @fn readReg
    * @brief Read register value through I2C bus
    * @param reg  Register address 8bits
    * @param pBuf Storage and buffer for data to be read
-   * @param size Length of data to be read
    * @return Return the read length, returning 0 means reading failed
    */
-  size_t readReg(uint8_t reg, void* pBuf, size_t size);
+  size_t readReg(uint8_t reg, void* pBuf);
 
 private:
   TwoWire *_pWire;   // Pointer to I2C communication method
@@ -312,22 +308,6 @@ public:
   void settingCMD(uint8_t setType, uint32_t setValue);
 
 protected:
-  /**
-   * @fn setVolume
-   * @brief Set voice volume
-   * @param voc - Volume value(0-9)
-   * @return None
-   */
-  void setVolume(uint8_t voc);
-
-  /**
-   * @fn setVolume
-   * @brief Set voice volume
-   * @param voc - Volume value(0-9)
-   * @return None
-   */
-  void getUniqueID(void);
-
   /**
    * @fn sendPacket
    * @brief Write data through UART

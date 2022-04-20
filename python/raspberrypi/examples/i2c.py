@@ -27,6 +27,18 @@ SNR9816 = DFRobot_SNR9816_I2C(i2c_addr=SNR9816_I2C_ADDR, bus=1)
 
 def setup():
   '''
+    @brief Set voice volume
+    @param vol - Volume value(0~20)
+  '''
+  SNR9816.set_volume(5)
+
+  '''
+    @brief 设置静音模式
+    @param mode - 静音模式; 设置值 1: mute, 0: unmute
+  '''
+  SNR9816.set_mute_mode(0)
+
+  '''
     @brief 设置唤醒持续时间
     @param wakeTime - 唤醒持续时间(0~255)
   '''
@@ -42,7 +54,7 @@ def setup():
     @brief 根据命令词ID播放对应的答复音
     @param CMDID - 命令词ID
   '''
-  SNR9816.play_by_CMDID(1)   # 唤醒词ID
+  # SNR9816.play_by_CMDID(1)   # 唤醒词ID
   SNR9816.play_by_CMDID(23)   # 普通词ID
 
 
